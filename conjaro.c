@@ -30,7 +30,7 @@ int main()
 
 	attroff(A_BOLD);
 
-	// int ch = getch();
+	int ch = getch();
 	// add_character(&buffer, &num_chars, '█');
 	// add_character(&buffer, &num_chars, (char) ch);
 	// process_character(&buffer, &num_chars, ch);
@@ -53,7 +53,7 @@ int main()
 	// 	attron(COLOR_PAIR(2));
 	// 	mvprintw(0, 3, " ");
 	// 	refresh();
-		
+
 	// 	attroff(A_BOLD);
 
 	// 	sleep(1);
@@ -162,7 +162,7 @@ int add_character_to_buffer(char **buffer, int *num_chars, char new_character)
 
 // gives you element position of cursor on the string buffer
 // given an X, Y position of the ncurses window
-cursor_loc_to_buffer_loc()
+int cursor_loc_to_buffer_loc()
 {
 
 }
@@ -172,6 +172,63 @@ cursor_loc_to_buffer_loc()
 int buffer_loc_to_cursor_loc()
 {
 
+}
+
+// prints the contents of the buffer to the ncurses window
+int display_buffer(char **buffer)
+{
+	// get screen dimensions
+	int screen_size_x, screen_size_y;
+	getmaxyx(stdscr, screen_size_y, screen_size_x);
+
+	// cursor starts at top left of screen
+	struct Cursor cursor = {0, 0};
+
+	int buffer_length = strlen(*buffer);
+
+
+	int buffer_index = 0;
+	while(buffer_index < buffer_length)
+	{
+		// write characters to screen until newline or screen width is reached
+		for (int i=0; i < screen_size_x && buffer_index < buffer_length; i++)
+		{
+			if ((*buffer)[buffer_index] == '\n') // end current line if newline is found
+			{
+				cursor.x = 0;
+				cursor.y ++;
+				buffer_index ++; // move to character after the next newline found
+				break; // move on to next iteration of while loop with new line
+			}
+
+			adjust_cursor(cursor.x, cursor.y, &cursor);
+			printw("%c", (*buffer)[buffer_index]);
+
+			cursor.x ++;
+			buffer_index ++;
+		}
+
+		// after finishing a full line or encountering a newline, move to next line
+		if (cursor.x >= screen_size_x || (buffer_index < buffer_length && (*buffer)[buffer_index] == '\n'))
+		{
+			cursor.x = 0;
+			cursor.y ++;
+		}
+
+		// skip any extra characters until the next newline is found since they won't fit on screen
+		while(buffer_index < buffer_length && (*buffer)[buffer_index] != '\n')
+		{
+			buffer_index ++; // move past characters that should be skipped on this line
+		}
+
+		// if we reach a newline, move past it to the next character
+		if (buffer_index < buffer_length && (*buffer)[buffer_index] == '\n')
+		{
+			buffer_index ++;
+		}
+	}
+
+	return 0;
 }
 
 // chatGPT generated function
