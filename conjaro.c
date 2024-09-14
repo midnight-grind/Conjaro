@@ -162,16 +162,54 @@ int add_character_to_buffer(char **buffer, int *num_chars, char new_character)
 
 // gives you element position of cursor on the string buffer
 // given an X, Y position of the ncurses window
-int cursor_loc_to_buffer_loc()
+int cursor_loc_to_buffer_loc(struct Cursor *cursor)
 {
+	int buffer_index = 0;
 
+	// find how many newline characters before cursor
+	for (int i=0; i<cursor->y; i++)
+	{
+		
+	}
 }
 
 // gives you X, Y coordinates of cursor on window
 // given an element position on the string buffer
-int buffer_loc_to_cursor_loc()
+int buffer_loc_to_cursor_loc(int index, char **buffer)
 {
+	struct Cursor ret_cursor = {0, 0};
 
+	// count how many newline characters between start of buffer and index (non-inclusive)
+	int newline_count = 0;
+	int x_count = 0;
+	for (int i=0; i<index; i++)
+	{
+		x_count ++;
+
+		if ((*buffer)[i] == '\n')
+		{
+			newline_count ++;
+			x_count = 0;
+		}
+	}
+
+	ret_cursor.y = newline_count;
+	ret_cursor.x = x_count;
+}
+
+bool cursor_on_screen(struct Cursor *cursor)
+{
+	// get screen dimensions
+	int screen_size_x, screen_size_y;
+	getmaxyx(stdscr, screen_size_y, screen_size_x);
+
+	if (cursor->x < 0 || cursor->x >= screen_size_x)
+		return false;
+	
+	if (cursor->y < 0 || cursor->y >= screen_size_y)
+		return false;
+
+	return true;
 }
 
 // prints the contents of the buffer to the ncurses window
