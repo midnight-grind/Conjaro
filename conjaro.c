@@ -162,15 +162,28 @@ int add_character_to_buffer(char **buffer, int *num_chars, char new_character)
 
 // gives you element position of cursor on the string buffer
 // given an X, Y position of the ncurses window
-int cursor_loc_to_buffer_loc(struct Cursor *cursor)
+int cursor_loc_to_buffer_loc(struct Cursor *cursor, char **buffer)
 {
 	int buffer_index = 0;
 
-	// find how many newline characters before cursor
-	for (int i=0; i<cursor->y; i++)
+	int count = 0;
+	for (int line=0; line<cursor->y; line++) // loop through each line
 	{
-		
+		int j;
+		while ((*buffer)[j] != '\0') // find how many newline characters before cursor
+		{
+			count++;
+
+			if ((*buffer)[j] == '\n')
+			{
+				break;
+			}
+
+			j++;
+		}
 	}
+
+	return count + cursor->x;
 }
 
 // gives you X, Y coordinates of cursor on window
