@@ -44,6 +44,45 @@ int main()
 // 	add_character(&buffer, &num_chars, (char) new_character);
 // }
 
+int main_loop2()
+{
+	char *buffer = (char *) malloc(50 * sizeof(char));
+	strcpy(buffer, "Hello, World!");
+
+	if (buffer == NULL)
+	{
+		endwin();
+		printf("not enough memory for text buffer");
+		return 1;
+	}
+
+	int buffer_index = 0;
+
+	int new_character;
+	while ((new_character = getch()) != 27)
+	{
+		if (new_character == KEY_LEFT)
+		{
+		}
+		else if (new_character == KEY_RIGHT)
+		{
+		}
+		else if (new_character == KEY_UP)
+		{
+		}
+		else if (new_character == KEY_DOWN)
+		{
+		}
+		else
+		{
+		}
+	}
+
+	return 0;
+
+}
+
+
 int main_loop()
 {
 	int num_chars = 1;
@@ -134,7 +173,7 @@ int add_character_to_buffer(char **buffer, int *num_chars, char new_character)
 
 // gives you element position of cursor on the string buffer
 // given an X, Y position of the ncurses window
-int cursor_loc_to_buffer_loc(struct Cursor *cursor, char **buffer)
+int cursor_loc_to_buffer_index(struct Cursor *cursor, char **buffer)
 {
 	int buffer_index = 0;
 
@@ -160,7 +199,7 @@ int cursor_loc_to_buffer_loc(struct Cursor *cursor, char **buffer)
 
 // gives you X, Y coordinates of cursor on window
 // given an element position on the string buffer
-int buffer_loc_to_cursor_loc(int index, char **buffer)
+int buffer_index_to_cursor_loc(int index, char **buffer)
 {
 	struct Cursor ret_cursor = {0, 0};
 
