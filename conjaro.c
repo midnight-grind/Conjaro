@@ -24,47 +24,16 @@ int main()
 	attron(COLOR_PAIR(1));
 
 	printw("Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses! Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses!");
-	move(0,3);
+	move(0,0);
 	refresh();
-
 	attroff(A_BOLD);
-
-	int ch = getch();
-	// add_character(&buffer, &num_chars, '█');
-	// add_character(&buffer, &num_chars, (char) ch);
-	// process_character(&buffer, &num_chars, ch);
-
-	// printw("\nYou pressed: %c", ch);
-	// printw("%c", ch);
-	// printw('█');
-	// printw("%c", ' ');
-	// printw(" ");
-
 	refresh();
-	// getch();
-	// endwin();
-
-	// for (int i=0; i<10; i++)
-	// {
-	// 	sleep(1);
-	// 	attron(COLOR_PAIR(2));
-	// 	mvprintw(0, 3, " ");
-	// 	refresh();
-
-	// 	attroff(A_BOLD);
-
-	// 	sleep(1);
-	// 	attron(COLOR_PAIR(1));
-	// 	mvprintw(0, 3, " ");
-	// 	refresh();
-	// }
 
 
 	main_loop();
-	// getch();
 	endwin();
 
-	printf("ended\n");
+	printf("conjaro session ended\n");
 
 	return 0;
 }
@@ -88,30 +57,35 @@ int main_loop()
 	}
 	buffer[0] = '\0';  // Initialize the buffer with an empty string
 
-	struct Cursor cursor;
+	// the better way to do this is:
+	// 1: determine which element on the buffer the cursor is
+	// 2: convert to a cursor coordinate
+	// 3: check if cursor is on screen
+	struct Cursor cursor = {0, 0};
+	adjust_cursor(cursor.x, cursor.y, &cursor);
 
-	getyx(stdscr, cursor.y, cursor.x);
+	// getyx(stdscr, cursor.y, cursor.x);
 
 	int new_character;
 	while ((new_character = getch()) != 27)
 	{
 		if (new_character == KEY_LEFT)
 		{
-			if (cursor.x != 0)
-				adjust_cursor(cursor.x - 1, cursor.y, &cursor);
+			if ((&cursor)->x != 0 || (&cursor)->y != 0) // stop cursor from going off left side of screen
+				adjust_cursor((&cursor)->x - 1, (&cursor)->y, &cursor);
 		}
 		else if (new_character == KEY_RIGHT)
 		{
-			adjust_cursor(cursor.x + 1, cursor.y, &cursor);
+			adjust_cursor((&cursor)->x + 1, (&cursor)->y, &cursor);
 		}
 		else if (new_character == KEY_UP)
 		{
-			if (cursor.y != 0)
-				adjust_cursor(cursor.x, cursor.y - 1, &cursor);
+			if ((&cursor)->y != 0)
+				adjust_cursor((&cursor)->x, (&cursor)->y - 1, &cursor);
 		}
 		else if (new_character == KEY_DOWN)
 		{
-			adjust_cursor(cursor.x, cursor.y + 1, &cursor);
+			adjust_cursor((&cursor)->x, (&cursor)->y + 1, &cursor);
 		}
 		else
 		{
@@ -124,12 +98,12 @@ int main_loop()
 
 int adjust_cursor(int x, int y, struct Cursor *cursor)
 {
+	cursor->x = x;
+	cursor->y = y;
 	move(20, 0);
 	printw("cursor location: %d, %d", cursor->x, cursor->y);
+	move(cursor->y, cursor->x);
 
-	cursor -> x = x;
-	cursor -> y = y;
-	move(y, x);
 	return 0;
 }
 
