@@ -21,7 +21,6 @@ int main()
 	start_color();
 
 	init_pair(1, COLOR_YELLOW, COLOR_BLACK);
-	init_pair(2, COLOR_YELLOW, COLOR_RED);
 	attron(COLOR_PAIR(1));
 
 	printw("Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses! Hello, ncurses!Hello, ncurses!Hello, ncurses!Hello, ncurses!");
@@ -38,8 +37,6 @@ int main()
 	// printw("\nYou pressed: %c", ch);
 	// printw("%c", ch);
 	// printw('█');
-
-	attron(COLOR_PAIR(2));
 	// printw("%c", ' ');
 	// printw(" ");
 
@@ -64,8 +61,6 @@ int main()
 
 
 	main_loop();
-
-
 	// getch();
 	endwin();
 
@@ -129,6 +124,9 @@ int main_loop()
 
 int adjust_cursor(int x, int y, struct Cursor *cursor)
 {
+	move(20, 0);
+	printw("cursor location: %d, %d", cursor->x, cursor->y);
+
 	cursor -> x = x;
 	cursor -> y = y;
 	move(y, x);
