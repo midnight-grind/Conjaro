@@ -59,13 +59,21 @@ int main_loop2()
 	int buffer_index = 0;
 
 	int new_character;
-	while ((new_character = getch()) != 27)
+	while ((new_character = getch()) != 27) // 27 is the esc key, exits Conjaro
 	{
 		if (new_character == KEY_LEFT)
 		{
+			if (buffer_index != 0)
+			{
+				buffer_index--;
+			}
 		}
 		else if (new_character == KEY_RIGHT)
 		{
+			if (buffer_index < strlen(buffer))
+			{
+				buffer_index++;
+			}
 		}
 		else if (new_character == KEY_UP)
 		{
@@ -80,6 +88,63 @@ int main_loop2()
 
 	return 0;
 
+}
+
+int count_between(char *buffer, int index)
+{
+	int count_between = 0;
+	char next_char = buffer[index];
+
+	index --;
+	while(true)
+	{
+		if (index < 0)
+			break;
+
+		next_char = buffer[index];
+		if (next_char == '\n')
+			break;
+
+		count_between++;
+		index--;
+	}
+
+	return count_between;
+}
+
+int next_new_line(char *buffer, int index)
+{
+	while(true)
+	{
+		if (index == strlen(buffer))
+			break;
+
+		if (buffer[index] == '\n')
+			break;
+
+		index++;
+	}
+
+	return index;
+}
+
+int handle_down_arrow(char **buffer, int index)
+{
+	int	next_index = next_new_line(buffer, index);
+	int count_between = count_between(*buffer, index);
+
+	for (int i=0; i<count_between; i++)
+	{
+		if (i >= strlen(buffer))
+			break;
+
+		if (buffer[next_index] == '\n')
+			break;
+
+		next_index += 1;
+	}
+
+	return next_index;
 }
 
 
@@ -208,11 +273,11 @@ int buffer_index_to_cursor_loc(int index, char **buffer)
 	int x_count = 0;
 	for (int i=0; i<index; i++)
 	{
-		x_count ++;
+		x_count++;
 
 		if ((*buffer)[i] == '\n')
 		{
-			newline_count ++;
+			newline_count++;
 			x_count = 0;
 		}
 	}
@@ -258,35 +323,35 @@ int display_buffer(char **buffer)
 			if ((*buffer)[buffer_index] == '\n') // end current line if newline is found
 			{
 				cursor.x = 0;
-				cursor.y ++;
-				buffer_index ++; // move to character after the next newline found
+				cursor.y++;
+				buffer_index++; // move to character after the next newline found
 				break; // move on to next iteration of while loop with new line
 			}
 
 			adjust_cursor(cursor.x, cursor.y, &cursor);
 			printw("%c", (*buffer)[buffer_index]);
 
-			cursor.x ++;
-			buffer_index ++;
+			cursor.x++;
+			buffer_index++;
 		}
 
 		// after finishing a full line or encountering a newline, move to next line
 		if (cursor.x >= screen_size_x || (buffer_index < buffer_length && (*buffer)[buffer_index] == '\n'))
 		{
 			cursor.x = 0;
-			cursor.y ++;
+			cursor.y++;
 		}
 
 		// skip any extra characters until the next newline is found since they won't fit on screen
 		while(buffer_index < buffer_length && (*buffer)[buffer_index] != '\n')
 		{
-			buffer_index ++; // move past characters that should be skipped on this line
+			buffer_index++; // move past characters that should be skipped on this line
 		}
 
 		// if we reach a newline, move past it to the next character
 		if (buffer_index < buffer_length && (*buffer)[buffer_index] == '\n')
 		{
-			buffer_index ++;
+			buffer_index++;
 		}
 	}
 
