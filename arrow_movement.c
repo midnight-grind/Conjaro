@@ -6,6 +6,13 @@ int handle_up_arrow(int buffer_index, int *newline_indexes)
     int previous_newline_index = find_previous_newline_index(buffer_index, newline_indexes);
 }
 
+int handle_down_arrow(int buffer_index, int *newline_indexes)
+{
+    int range = find_range(buffer_index, newline_indexes);
+
+    int next_newline_index = find_next_newline_index(buffer_index, newline_indexes);
+}
+
 int find_range(int buffer_index, int *newline_indexes)
 {
 
@@ -30,9 +37,14 @@ int find_range(int buffer_index, int *newline_indexes)
 
 int find_previous_newline_index(int buffer_index, int *newline_indexes)
 {
-    for (int i=0; i<strlen(newline_indexes); i++)
-        if (buffer_index >= newline_indexes[i])
-            return i;
+    if (buffer_index != 0)
+        return buffer_index - 1;
+}
+
+int find_next_newline_index(int buffer_index, int *newline_indexes)
+{
+    if (buffer_index != len(newline_indexes))
+        return buffer_index + 1;
 }
 
 // notes:
